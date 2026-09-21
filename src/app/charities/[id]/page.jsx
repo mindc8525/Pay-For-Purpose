@@ -1,0 +1,252 @@
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { CharityService } from "@/server/services/charity-service";
+
+// Fallback data if database is empty or not seeded
+const FALLBACK_CHARITIES = {
+  "1": {
+    id: "1",
+    name: "First Tee Initiative",
+    description:
+      "Empowering youth through life skills, character education, and mentorship programs that build confidence. First Tee teaches children core values such as honesty, integrity, sportsmanship, and perseverance through the game of golf.",
+    image_url:
+      "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop",
+    website_url: "https://www.firsttee.org",
+    is_featured: true,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    charity_events: [
+      {
+        id: "e1",
+        charity_id: "1",
+        title: "Annual Youth Mentorship Day 2026",
+        description: "Join junior golfers and community mentors for an inspiring charity invitational.",
+        event_date: "2026-06-15",
+        event_type: "golf_day",
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: "e2",
+        charity_id: "1",
+        title: "Life Skills & Mentorship Clinic",
+        description: "An inspiring workshop introducing underprivileged kids to leadership fundamentals.",
+        event_date: "2026-08-20",
+        event_type: "workshop",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  "2": {
+    id: "2",
+    name: "Global Aid Network",
+    description:
+      "Connecting athletes and supporters to fund urgent emergency relief, pediatric medical aid, clean water access, and disaster rehabilitation worldwide.",
+    image_url:
+      "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&auto=format&fit=crop",
+    website_url: "https://www.golfforcause.org",
+    is_featured: true,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    charity_events: [
+      {
+        id: "e3",
+        charity_id: "2",
+        title: "Community Charity Pro-Am",
+        description: "A premier scramble tournament where 100% of proceeds fund community health programs.",
+        event_date: "2026-05-12",
+        event_type: "golf_day",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  "3": {
+    id: "3",
+    name: "Green Habitat Trust",
+    description:
+      "Dedicated to environmental conservation, water recycling, biodiversity corridors, and eco-friendly land stewardship on protected open spaces.",
+    image_url:
+      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop",
+    website_url: "https://www.greenfairways.org",
+    is_featured: false,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    charity_events: [
+      {
+        id: "e4",
+        charity_id: "3",
+        title: "Eco-Course Sustainability Summit",
+        description: "Workshops with groundskeepers and environmentalists on sustainable land stewardship.",
+        event_date: "2026-07-08",
+        event_type: "workshop",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+};
+
+export const dynamic = 'force-dynamic';
+
+export default async function CharityDetailPage({ params }) {
+  const { id } = await params;
+
+  let charity = null;
+
+  try {
+    charity = await CharityService.getById(id);
+  } catch {
+    // If Supabase query fails or offline, fallback to mock data
+  }
+
+  if (!charity) {
+    charity = FALLBACK_CHARITIES[id] || null;
+  }
+
+  if (!charity) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 max-w-4xl mx-auto px-4 py-16 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Charity Not Found</h1>
+          <p className="text-gray-600 mb-6">
+            The charity you are looking for does not exist or has been deactivated.
+          </p>
+          <Link href="/charities">
+            <Button variant="outline">← Back to Charity Directory</Button>
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <Header />
+
+      <main className="flex-1 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/charities"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors"
+          >
+            ← Back to Partner Causes
+          </Link>
+
+          {/* Hero Card */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden mb-8">
+            <div className="relative h-64 sm:h-80 w-full bg-slate-900 overflow-hidden">
+              {charity.image_url ? (
+                <img
+                  src={charity.image_url}
+                  alt={charity.name}
+                  className="w-full h-full object-cover opacity-85"
+                />
+              ) : null}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex items-end p-6 sm:p-10">
+                <div className="text-white space-y-2">
+                  {charity.is_featured && (
+                    <span className="inline-block px-3 py-1 bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-xs">
+                      Featured Partner
+                    </span>
+                  )}
+                  <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">{charity.name}</h1>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-10 space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-8">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">About the Organization</h2>
+                  <p className="text-sm text-slate-500">Verified Non-Profit Partner</p>
+                </div>
+                <div className="flex gap-3">
+                  {charity.website_url && (
+                    <a
+                      href={charity.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors text-slate-700"
+                    >
+                      Official Website ↗
+                    </a>
+                  )}
+                  <Link href={`/subscribe?charity=${charity.id}`}>
+                    <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs">
+                      Support This Cause
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="prose max-w-none text-slate-700 text-base md:text-lg leading-relaxed">
+                {charity.description}
+              </div>
+
+              {/* Giving Impact Info */}
+              <div className="bg-emerald-50/60 border border-emerald-200/70 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-emerald-950">
+                    How Your Membership Directly Empowers {charity.name}
+                  </h3>
+                  <p className="text-sm text-emerald-900/80 leading-relaxed">
+                    When you select this cause, at least 10% (up to 100%) of your recurring subscription fee is remitted directly to fund their frontline community operations.
+                  </p>
+                </div>
+                <Link href={`/subscribe?charity=${charity.id}`} className="shrink-0">
+                  <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-xs">
+                    Choose as My Cause
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Upcoming Events Section */}
+              <div className="space-y-4 pt-4">
+                <h3 className="text-xl font-bold text-gray-900">
+                  Upcoming Charity Events & Golf Days
+                </h3>
+                {charity.charity_events && charity.charity_events.length > 0 ? (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {charity.charity_events.map((evt) => (
+                      <Card key={evt.id} className="border border-gray-200/80 hover:shadow-md transition-shadow">
+                        <CardContent className="p-5 space-y-2">
+                          <div className="flex justify-between items-start">
+                            <span className="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-teal-50 text-teal-700 capitalize">
+                              {evt.event_type.replace("_", " ")}
+                            </span>
+                            <span className="text-xs font-medium text-gray-500">
+                              {new Date(evt.event_date).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-gray-900 text-base">{evt.title}</h4>
+                          <p className="text-sm text-gray-600">{evt.description}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 text-center border border-dashed border-gray-200 rounded-xl text-gray-500 text-sm">
+                    No upcoming events listed at this time. Check back soon!
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
