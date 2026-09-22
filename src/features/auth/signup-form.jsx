@@ -4,15 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export function SignupForm({ selectedPlanId, initialCharities = [] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const planQuery = selectedPlanId || searchParams?.get("plan");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [billingInterval, setBillingInterval] = useState(
-    selectedPlanId === "2" || selectedPlanId?.includes("year") ? "yearly" : "monthly"
+    planQuery === "2" || planQuery?.includes("year") ? "yearly" : "monthly"
   );
   const [charities, setCharities] = useState(initialCharities);
   const [selectedCharity, setSelectedCharity] = useState(initialCharities[0]?.id || "");
@@ -20,8 +24,16 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    const plan = selectedPlanId || searchParams?.get("plan");
+    if (plan === "2" || plan?.includes("year")) {
+      setBillingInterval("yearly");
+    } else if (plan === "1" || plan?.includes("month")) {
+      setBillingInterval("monthly");
+    }
+  }, [selectedPlanId, searchParams]);
 
   useEffect(() => {
     if (charities.length === 0) {
@@ -30,7 +42,7 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
             setCharities(data);
-            setSelectedCharity(data[0].id);
+            setSelectedCharity((prev) => prev || data[0].id);
           }
         })
         .catch(() => {});
@@ -70,6 +82,8 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               userId: data.user.id,
+              email: email.trim().toLowerCase(),
+              fullName: fullName.trim(),
               billingInterval,
               charityId: selectedCharity,
               contributionPercentage: Number(contribution),

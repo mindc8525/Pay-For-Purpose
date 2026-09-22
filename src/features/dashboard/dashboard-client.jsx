@@ -103,17 +103,21 @@ export function DashboardClient({
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Welcome back{authUser.user_metadata?.full_name ? `, ${authUser.user_metadata.full_name}` : ""}!
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-teal-50 text-teal-700 border border-teal-200 uppercase">
-              {subscription?.status === "active" ? "Active Subscriber" : "Free Member"}
+            <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase ${
+              subscription?.status === "active"
+                ? "bg-teal-50 text-teal-700 border border-teal-200"
+                : "bg-amber-50 text-amber-700 border border-amber-200"
+            }`}>
+              {subscription?.status === "active" ? "Active Subscriber" : "Inactive Subscription"}
             </span>
           </div>
           <p className="text-sm text-gray-600">
-            Keep your latest 5 Stableford scores up to date to participate in the upcoming monthly draw.
+            Keep your latest 5 Stableford rounds up to date to participate in the upcoming monthly draw.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          {authUser.user_metadata?.role === "ADMIN" && (
+          {(authUser.role === "ADMIN" || authUser.user_metadata?.role === "ADMIN") && (
             <Link href="/admin">
               <Button variant="outline" className="text-purple-700 border-purple-200 hover:bg-purple-50">
                 ★ Admin Panel

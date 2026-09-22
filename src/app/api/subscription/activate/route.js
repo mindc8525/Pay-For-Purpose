@@ -18,6 +18,26 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Admin client not available' }, { status: 500 });
     }
 
+    // Ensure public.users row exists
+    const email = body.email || authUser?.email;
+    const fullName = body.fullName || authUser?.user_metadata?.full_name;
+    if (email) {
+      try {
+        await adminClient.from('users').upsert(
+          {
+            id: userId,
+            email,
+            full_name: fullName || '',
+            role: 'USER',
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        );
+      } catch (userErr) {
+        console.warn('Could not upsert public.users record:', userErr);
+      }
+    }
+
     // 1. Fetch available plans from Supabase
     const { data: plans, error: planError } = await adminClient
       .from('plans')

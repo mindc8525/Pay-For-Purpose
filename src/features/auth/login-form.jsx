@@ -67,6 +67,10 @@ export function LoginForm() {
       }
 
       if (data?.user) {
+        let isAdmin =
+          data.user.user_metadata?.role === "ADMIN" ||
+          data.user.app_metadata?.role === "ADMIN";
+
         try {
           const { data: profile } = await supabase
             .from("users")
@@ -74,14 +78,16 @@ export function LoginForm() {
             .eq("id", data.user.id)
             .single();
 
-          let target = redirectTo;
-          if (profile?.role === "ADMIN" && target === "/dashboard") {
-            target = "/admin";
+          if (profile?.role === "ADMIN") {
+            isAdmin = true;
           }
-          window.location.href = target;
-        } catch {
-          window.location.href = redirectTo;
+        } catch {}
+
+        let target = redirectTo;
+        if (isAdmin && (target === "/dashboard" || target === "/")) {
+          target = "/admin";
         }
+        window.location.href = target;
       } else {
         setLoading(false);
       }
@@ -201,7 +207,7 @@ export function LoginForm() {
           <p className="text-xs text-slate-500">
             Don&apos;t have an account yet?{" "}
             <Link href="/signup" className="text-emerald-700 hover:underline font-bold">
-              Sign Up Free
+              Create Account
             </Link>
           </p>
           <p className="text-xs text-slate-400">

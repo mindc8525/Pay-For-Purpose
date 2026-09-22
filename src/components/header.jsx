@@ -42,7 +42,7 @@ export function Header() {
               <div className="w-24 h-9 bg-slate-100 animate-pulse rounded-lg" />
             ) : user ? (
               <>
-                {user.role === "ADMIN" && (
+                {(user.role === "ADMIN" || user.user_metadata?.role === "ADMIN") && (
                   <Link href="/admin">
                     <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm h-9 px-3 sm:px-4 font-semibold shadow-xs">
                       Admin Portal
