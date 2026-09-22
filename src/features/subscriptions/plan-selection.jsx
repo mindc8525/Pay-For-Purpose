@@ -6,59 +6,59 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [selectedCharity, setSelectedCharity] = useState("");
-  const [contribution, setContribution] = useState(10);
+  const monthlyPlan = plans.find((p) => p.billing_interval === "monthly");
+  const yearlyPlan = plans.find((p) => p.billing_interval === "yearly");
+  const [selectedPlan, setSelectedPlan] = useState(monthlyPlan || plans[0] || null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubscribe = async () => {
-    if (!selectedPlan) return;
+    const activePlan = selectedPlan || monthlyPlan || plans[0];
+    if (!activePlan) return;
 
     setLoading(true);
 
     if (!isAuthenticated) {
-      router.push(`/signup?plan=${selectedPlan.id}`);
+      router.push(`/signup?plan=${activePlan.id}`);
       return;
     }
 
-    if (selectedCharity) {
-      try {
-        await fetch("/api/me/charity", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            charity_id: selectedCharity,
-            contribution_percentage: contribution,
-          }),
-        });
-      } catch (error) {
-        console.error("Error setting charity preference:", error);
-      }
-    }
-
     try {
+      const res = await fetch("/api/subscription/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          billingInterval: activePlan.billing_interval || "monthly",
+        }),
+      });
+
+      if (res.ok) {
+        router.push("/dashboard");
+        return;
+      }
+
       const response = await fetch("/api/subscription/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          price_id: selectedPlan.stripe_price_id,
-          plan_id: selectedPlan.id,
+          price_id: activePlan.stripe_price_id,
+          plan_id: activePlan.id,
         }),
       });
 
       const { url } = await response.json();
       if (url) {
         window.location.href = url;
+      } else {
+        router.push("/dashboard");
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
+      console.error("Error activating subscription:", error);
+      router.push("/dashboard");
+    } finally {
       setLoading(false);
     }
   };
-
-  const monthlyPlan = plans.find((p) => p.billing_interval === "monthly");
-  const yearlyPlan = plans.find((p) => p.billing_interval === "yearly");
 
   return (
     <div className="space-y-8">
@@ -150,58 +150,22 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
       </div>
 
       {selectedPlan && (
-        <Card className="animate-in fade-in slide-in-from-bottom-4 duration-300 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
-          <CardContent className="pt-6">
-            <h4 className="text-lg font-bold text-slate-900 mb-4">Select a Charity (Optional)</h4>
-            <div className="space-y-4">
-              <select
-                value={selectedCharity}
-                onChange={(e) => setSelectedCharity(e.target.value)}
-                className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 shadow-2xs"
-              >
-                <option value="">Select a partner charity...</option>
-                {charities.map((charity) => (
-                  <option key={charity.id} value={charity.id}>
-                    {charity.name}
-                  </option>
-                ))}
-              </select>
-
-              {selectedCharity && (
-                <div className="pt-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Contribution Percentage (min 10%)
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="10"
-                      max="100"
-                      value={contribution}
-                      onChange={(e) => setContribution(Number(e.target.value))}
-                      className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                    />
-                    <span className="w-16 text-center font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200/60 text-sm">
-                      {contribution}%
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Button
-              onClick={handleSubscribe}
-              disabled={loading}
-              className="w-full mt-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs py-6 text-base font-semibold transition-all"
-            >
-              {loading
-                ? "Processing..."
-                : isAuthenticated
-                ? "Continue to Payment"
-                : "Create Account"}
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="pt-2 flex flex-col items-center animate-in fade-in slide-in-from-bottom-3 duration-300">
+          <Button
+            onClick={handleSubscribe}
+            disabled={loading}
+            className="w-full max-w-md bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-md py-6 text-base font-semibold transition-all hover:scale-[1.01]"
+          >
+            {loading
+              ? "Processing..."
+              : isAuthenticated
+              ? "Activate Membership"
+              : "Create Account"}
+          </Button>
+          <p className="text-xs text-slate-500 mt-2.5 text-center">
+            Selected: <span className="font-semibold text-slate-800">{selectedPlan.name}</span> (${selectedPlan.price}/{selectedPlan.billing_interval === "yearly" ? "year" : "month"})
+          </p>
+        </div>
       )}
     </div>
   );

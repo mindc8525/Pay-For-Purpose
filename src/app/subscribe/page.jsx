@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { PlanSelection } from "@/features/subscriptions/plan-selection";
-import { CharityService } from "@/server/services/charity-service";
+import { getAuthUser } from "@/lib/supabase/server";
 
 export default async function SubscribePage() {
   const plans = [
@@ -9,13 +9,13 @@ export default async function SubscribePage() {
     { id: '2', name: 'Annual Membership', billing_interval: 'yearly', price: 99.99, currency: 'USD', stripe_price_id: 'price_yearly' },
   ];
   
-  let charities = [];
+  let isAuthenticated = false;
   try {
-    charities = await CharityService.list();
+    const user = await getAuthUser();
+    isAuthenticated = !!user;
   } catch {
-    charities = [];
+    isAuthenticated = false;
   }
-  const isAuthenticated = false;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -33,7 +33,7 @@ export default async function SubscribePage() {
               Join Par For Purpose to enter monthly cash draws, track your rounds, and empower vetted charities.
             </p>
           </div>
-          <PlanSelection plans={plans} charities={charities} isAuthenticated={isAuthenticated} />
+          <PlanSelection plans={plans} isAuthenticated={isAuthenticated} />
         </div>
       </main>
       <Footer />

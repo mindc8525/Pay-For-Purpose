@@ -208,14 +208,9 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
           {/* Charity Selection */}
           <div className="pt-1 space-y-3 bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label htmlFor="charitySelect" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Supported Partner Charity
-                </label>
-                <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200">
-                  Required (§ 08.1)
-                </span>
-              </div>
+              <label htmlFor="charitySelect" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Supported Partner Charity
+              </label>
               <select
                 id="charitySelect"
                 value={selectedCharity}
