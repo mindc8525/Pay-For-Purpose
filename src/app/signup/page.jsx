@@ -19,12 +19,6 @@ function SignupContent({ initialCharities = [] }) {
       </div>
       <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-8 sm:p-9">
         <SignupForm initialCharities={initialCharities} />
-        <div className="mt-6 text-center text-sm text-slate-600">
-          Already have an account?{" "}
-          <Link href="/login" className="text-emerald-700 font-semibold hover:underline">
-            Log In
-          </Link>
-        </div>
       </div>
     </div>
   );

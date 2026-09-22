@@ -5,10 +5,19 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { CharityActionButton } from "@/features/charities/charity-action-button";
 
-export function CharitiesClient({ initialCharities = [] }) {
+export function CharitiesClient({
+  initialCharities = [],
+  isAuthenticated = false,
+  hasActiveSubscription = false,
+  initialUserPreference = null,
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedCharityId, setSelectedCharityId] = useState(
+    initialUserPreference?.charity_id || null
+  );
 
   const filteredCharities = initialCharities.filter((charity) => {
     const matchesSearch =
@@ -120,14 +129,16 @@ export function CharitiesClient({ initialCharities = [] }) {
                       Learn More & Events
                     </Button>
                   </Link>
-                  <Link href={`/subscribe?charity=${charity.id}`}>
-                    <Button
-                      size="sm"
-                      className="text-xs font-semibold bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white"
-                    >
-                      Support
-                    </Button>
-                  </Link>
+                  <CharityActionButton
+                    charityId={charity.id}
+                    charityName={charity.name}
+                    isAuthenticated={isAuthenticated}
+                    hasActiveSubscription={hasActiveSubscription}
+                    isCurrentCause={selectedCharityId === charity.id}
+                    currentPercentage={initialUserPreference?.contribution_percentage || 10}
+                    variant="card"
+                    onSelected={(newId) => setSelectedCharityId(newId)}
+                  />
                 </div>
               </CardContent>
             </Card>

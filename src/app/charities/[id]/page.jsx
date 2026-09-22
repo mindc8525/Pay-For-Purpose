@@ -4,6 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CharityService } from "@/server/services/charity-service";
+import { SubscriptionService } from "@/server/services/subscription-service";
+import { getAuthUser } from "@/lib/supabase/server";
+import { CharityActionButton } from "@/features/charities/charity-action-button";
 
 // Fallback data if database is empty or not seeded
 const FALLBACK_CHARITIES = {
@@ -125,11 +128,28 @@ export default async function CharityDetailPage({ params }) {
   const { id } = await params;
 
   let charity = null;
+  let user = null;
+  let userPreference = null;
+  let hasActiveSubscription = false;
 
   try {
     charity = await CharityService.getById(id);
   } catch {
     // If Supabase query fails or offline, fallback to mock data
+  }
+
+  try {
+    user = await getAuthUser();
+    if (user) {
+      const [pref, sub] = await Promise.all([
+        CharityService.getUserPreference(user.id).catch(() => null),
+        SubscriptionService.getUserSubscription(user.id).catch(() => null),
+      ]);
+      userPreference = pref;
+      hasActiveSubscription = sub?.status === 'active';
+    }
+  } catch {
+    // ignore
   }
 
   if (!charity) {
@@ -206,11 +226,15 @@ export default async function CharityDetailPage({ params }) {
                       Official Website ↗
                     </a>
                   )}
-                  <Link href={`/signup?charity=${charity.id}`}>
-                    <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs">
-                      Support This Cause
-                    </Button>
-                  </Link>
+                  <CharityActionButton
+                    charityId={charity.id}
+                    charityName={charity.name}
+                    isAuthenticated={!!user}
+                    hasActiveSubscription={hasActiveSubscription}
+                    isCurrentCause={userPreference?.charity_id === charity.id}
+                    currentPercentage={userPreference?.contribution_percentage || 10}
+                    variant="primary"
+                  />
                 </div>
               </div>
 
@@ -229,11 +253,15 @@ export default async function CharityDetailPage({ params }) {
                     When you select this cause, at least 10% (up to 100%) of your recurring subscription fee is remitted directly to fund their frontline community operations.
                   </p>
                 </div>
-                <Link href={`/signup?charity=${charity.id}`} className="shrink-0">
-                  <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-xs">
-                    Choose as My Cause
-                  </Button>
-                </Link>
+                <CharityActionButton
+                  charityId={charity.id}
+                  charityName={charity.name}
+                  isAuthenticated={!!user}
+                  hasActiveSubscription={hasActiveSubscription}
+                  isCurrentCause={userPreference?.charity_id === charity.id}
+                  currentPercentage={userPreference?.contribution_percentage || 10}
+                  variant="banner"
+                />
               </div>
 
               {/* Upcoming Events Section */}

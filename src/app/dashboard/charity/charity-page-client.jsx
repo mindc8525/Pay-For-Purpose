@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { CharityCard } from "@/features/charities/charity-card";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export function CharityPageClient() {
+  const searchParams = useSearchParams();
+  const charityFromQuery = searchParams?.get("charity") || searchParams?.get("select");
   const [preference, setPreference] = useState(null);
   const [charities, setCharities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +46,12 @@ export function CharityPageClient() {
 
   return (
     <div className="space-y-6">
-      <CharityCard preference={preference} charities={charities} onUpdate={fetchCharityData} />
+      <CharityCard
+        preference={preference}
+        charities={charities}
+        onUpdate={fetchCharityData}
+        initialSelectedCharity={charityFromQuery}
+      />
 
       {selectedCharity && (
         <Card className="border border-emerald-200/80 bg-emerald-50/40 rounded-2xl shadow-xs">

@@ -4,21 +4,25 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
-export function CharityCard({ preference, charities = [], onUpdate }) {
-  const [selectedCharity, setSelectedCharity] = useState(preference?.charity_id || "");
+export function CharityCard({ preference, charities = [], onUpdate, initialSelectedCharity }) {
+  const [selectedCharity, setSelectedCharity] = useState(
+    initialSelectedCharity || preference?.charity_id || ""
+  );
   const [contribution, setContribution] = useState(preference?.contribution_percentage || 10);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (preference?.charity_id) {
+    if (initialSelectedCharity) {
+      setSelectedCharity(initialSelectedCharity);
+    } else if (preference?.charity_id) {
       setSelectedCharity(preference.charity_id);
     }
     if (preference?.contribution_percentage) {
       setContribution(preference.contribution_percentage);
     }
-  }, [preference]);
+  }, [preference, initialSelectedCharity]);
 
   const handleSave = async () => {
     if (!selectedCharity) {

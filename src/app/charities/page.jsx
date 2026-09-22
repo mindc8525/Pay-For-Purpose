@@ -1,6 +1,8 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CharityService } from "@/server/services/charity-service";
+import { SubscriptionService } from "@/server/services/subscription-service";
+import { getAuthUser } from "@/lib/supabase/server";
 import { CharitiesClient } from "./charities-client";
 
 const DEFAULT_CHARITIES = [
@@ -46,6 +48,9 @@ export const dynamic = 'force-dynamic';
 
 export default async function CharitiesPage() {
   let charities = [];
+  let user = null;
+  let userPreference = null;
+  let hasActiveSubscription = false;
 
   try {
     const data = await CharityService.list();
@@ -56,6 +61,20 @@ export default async function CharitiesPage() {
     }
   } catch {
     charities = DEFAULT_CHARITIES;
+  }
+
+  try {
+    user = await getAuthUser();
+    if (user) {
+      const [pref, sub] = await Promise.all([
+        CharityService.getUserPreference(user.id).catch(() => null),
+        SubscriptionService.getUserSubscription(user.id).catch(() => null),
+      ]);
+      userPreference = pref;
+      hasActiveSubscription = sub?.status === 'active';
+    }
+  } catch {
+    // ignore
   }
 
   return (
@@ -75,7 +94,12 @@ export default async function CharitiesPage() {
             </p>
           </div>
 
-          <CharitiesClient initialCharities={charities} />
+          <CharitiesClient
+            initialCharities={charities}
+            isAuthenticated={!!user}
+            hasActiveSubscription={hasActiveSubscription}
+            initialUserPreference={userPreference}
+          />
         </div>
       </main>
       <Footer />

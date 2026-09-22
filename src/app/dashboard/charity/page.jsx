@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
 import { CharityPageClient } from "./charity-page-client";
+import { Suspense } from "react";
 
 export default function DashboardCharityPage() {
   return (
@@ -31,8 +32,9 @@ export default function DashboardCharityPage() {
             </p>
           </div>
 
-
-          <CharityPageClient />
+          <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading charity preferences...</div>}>
+            <CharityPageClient />
+          </Suspense>
         </div>
       </main>
       <Footer />

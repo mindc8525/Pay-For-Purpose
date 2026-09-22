@@ -2,6 +2,8 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { PlanSelection } from "@/features/subscriptions/plan-selection";
 import { getAuthUser } from "@/lib/supabase/server";
+import { SubscriptionService } from "@/server/services/subscription-service";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function SubscribePage({ searchParams }) {
@@ -16,8 +18,22 @@ export default async function SubscribePage({ searchParams }) {
   let isAuthenticated = false;
   try {
     const user = await getAuthUser();
-    isAuthenticated = !!user;
-  } catch {
+    if (user) {
+      isAuthenticated = true;
+      const subscription = await SubscriptionService.getUserSubscription(user.id);
+      if (subscription && subscription.status === 'active') {
+        if (charityId) {
+          redirect(`/dashboard/charity?charity=${encodeURIComponent(charityId)}`);
+        } else {
+          redirect('/dashboard');
+        }
+      }
+    }
+  } catch (err) {
+    // If redirect throws NEXT_REDIRECT, rethrow it
+    if (err && typeof err === 'object' && 'digest' in err) {
+      throw err;
+    }
     isAuthenticated = false;
   }
 
