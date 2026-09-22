@@ -11,6 +11,9 @@ export function SignupForm({ selectedPlanId }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [billingInterval, setBillingInterval] = useState(
+    selectedPlanId === "2" || selectedPlanId?.includes("year") ? "yearly" : "monthly"
+  );
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -40,11 +43,29 @@ export function SignupForm({ selectedPlanId }) {
         return;
       }
 
+      // Provision active membership directly in Supabase
+      if (data?.user?.id) {
+        try {
+          await fetch("/api/subscription/activate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: data.user.id,
+              billingInterval,
+            }),
+          });
+        } catch (subErr) {
+          console.warn("Could not auto-provision subscription:", subErr);
+        }
+      }
+
       if (data?.session) {
-        const target = selectedPlanId ? `/subscribe?plan=${selectedPlanId}` : "/dashboard";
-        window.location.href = target;
+        window.location.href = "/dashboard?welcome=true";
       } else {
-        setSuccess("Account created successfully! If email confirmation is enabled in your Supabase project, check your inbox to confirm, then sign in below.");
+        const planName = billingInterval === "yearly" ? "Yearly Hero" : "Monthly Hero";
+        setSuccess(
+          `Account and active ${planName} membership created! You can now sign in below with your credentials.`
+        );
         setLoading(false);
       }
     } catch (err) {
@@ -57,14 +78,14 @@ export function SignupForm({ selectedPlanId }) {
     <div className="space-y-4">
       {success && (
         <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 leading-relaxed font-medium">
-          <p className="font-bold mb-1">✓ Account Registered!</p>
+          <p className="font-bold mb-1">✓ Account &amp; Membership Created!</p>
           <p>{success}</p>
           <div className="mt-3">
             <Link
               href="/login"
-              className="inline-block px-4 py-2 bg-emerald-700 text-white rounded-lg font-bold text-xs hover:bg-emerald-800 transition-colors"
+              className="inline-block px-4 py-2 bg-emerald-700 text-white rounded-lg font-bold text-xs hover:bg-emerald-800 transition-colors shadow-xs"
             >
-              Go to Sign In →
+              Sign In to Your Account →
             </Link>
           </div>
         </div>
@@ -118,6 +139,51 @@ export function SignupForm({ selectedPlanId }) {
             />
           </div>
 
+          {/* Plan Selection */}
+          <div className="pt-1">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Select Membership Tier
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setBillingInterval("monthly")}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  billingInterval === "monthly"
+                    ? "border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-600 shadow-2xs"
+                    : "border-slate-200 bg-white hover:border-slate-300"
+                }`}
+              >
+                <div className="font-bold text-slate-900 text-sm">Monthly Hero</div>
+                <div className="text-xs text-slate-500 mt-0.5">$9.99 / month</div>
+                <div className="text-[11px] text-emerald-700 font-semibold mt-1.5 flex items-center gap-1">
+                  <span>✓</span> Direct Activation
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBillingInterval("yearly")}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  billingInterval === "yearly"
+                    ? "border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-600 shadow-2xs"
+                    : "border-slate-200 bg-white hover:border-slate-300"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900 text-sm">Yearly Hero</span>
+                  <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded">
+                    SAVE 17%
+                  </span>
+                </div>
+                <div className="text-xs text-slate-500 mt-0.5">$99.99 / year</div>
+                <div className="text-[11px] text-emerald-700 font-semibold mt-1.5 flex items-center gap-1">
+                  <span>✓</span> Direct Activation
+                </div>
+              </button>
+            </div>
+          </div>
+
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 leading-relaxed font-medium">
               {error}
@@ -126,10 +192,10 @@ export function SignupForm({ selectedPlanId }) {
 
           <Button
             type="submit"
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs py-5 text-sm font-semibold transition-all"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs py-5 text-sm font-semibold transition-all mt-2"
             disabled={loading}
           >
-            {loading ? "Creating account..." : "Create Account"}
+            {loading ? "Creating account..." : "Join Par For Purpose"}
           </Button>
 
           <p className="text-center text-xs text-slate-500 pt-2">

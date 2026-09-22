@@ -96,23 +96,49 @@ export class SubscriptionService {
     
     // If Stripe is not configured or unavailable, activate subscription directly in database
     if (!stripeKey || stripeKey.includes('placeholder') || stripeKey === 'bypass') {
-      const periodDays = priceId?.includes('year') || planId === '2' ? 365 : 30;
-      const periodEnd = new Date(Date.now() + periodDays * 24 * 60 * 60 * 1000).toISOString();
+      const periodDays = priceId?.includes('year') || planId?.includes('year') || planId === '2' ? 365 : 30;
+      const now = new Date();
+      const periodEnd = new Date(now.getTime() + periodDays * 24 * 60 * 60 * 1000).toISOString();
 
       if (!isMockDatabase()) {
         try {
-          const supabase = await createClient();
-          await supabase.from('subscriptions').upsert({
+          const { createAdminClient } = await import('@/lib/supabase/admin');
+          const adminClient = createAdminClient();
+          const db = adminClient || (await createClient());
+
+          // Get active plans to match UUID
+          const { data: plans } = await db.from('plans').select('*');
+          let matchedPlan = plans?.find(
+            (p) => p.id === planId || p.billing_interval === (periodDays === 365 ? 'yearly' : 'monthly')
+          );
+          if (!matchedPlan && plans?.length > 0) {
+            matchedPlan = plans[0];
+          }
+
+          // Check for existing subscription to update or insert cleanly
+          const { data: existing } = await db
+            .from('subscriptions')
+            .select('id')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+          const subData = {
             user_id: userId,
-            plan_id: planId || '1',
+            plan_id: matchedPlan ? matchedPlan.id : planId,
             stripe_customer_id: 'cust_direct_' + userId,
-            stripe_subscription_id: 'sub_direct_' + Date.now(),
+            stripe_subscription_id: 'sub_direct_' + userId + '_' + Date.now(),
             status: 'active',
-            current_period_start: new Date().toISOString(),
+            current_period_start: now.toISOString(),
             current_period_end: periodEnd,
             cancel_at_period_end: false,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: 'user_id' });
+            updated_at: now.toISOString(),
+          };
+
+          if (existing?.id) {
+            await db.from('subscriptions').update(subData).eq('id', existing.id);
+          } else {
+            await db.from('subscriptions').insert(subData);
+          }
         } catch (err) {
           console.warn('Direct subscription activation in Supabase:', err);
         }

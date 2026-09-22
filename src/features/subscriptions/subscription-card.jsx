@@ -1,18 +1,27 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import Link from "next/link";
 
 export function SubscriptionCard({ subscription }) {
   if (!subscription) {
     return (
-      <Card>
+      <Card className="rounded-2xl border-slate-200 shadow-xs bg-white">
         <CardHeader>
-          <h2 className="text-xl font-bold">Subscription</h2>
+          <h2 className="text-xl font-bold text-slate-900">Subscription</h2>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-4">
-            <p className="text-gray-600 mb-4">You don&apos;t have an active subscription</p>
+          <div className="text-center py-4 space-y-3">
+            <p className="text-sm text-slate-600">You don&apos;t have an active subscription</p>
+            <div>
+              <Link href="/subscribe">
+                <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold py-2.5 px-4 shadow-xs">
+                  Choose Membership Plan →
+                </Button>
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>
