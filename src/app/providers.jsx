@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isMockDatabase } from "@/lib/supabase/db-mode";
 import { useRouter } from "next/navigation";
 
 const AuthContext = createContext({
@@ -22,20 +23,30 @@ export function Providers({ children }) {
   const supabase = createClient();
 
   useEffect(() => {
-    // 1. Check local mock user session first (instant)
-    try {
-      const stored = localStorage.getItem("mock_user");
-      if (stored) {
-        setUser(JSON.parse(stored));
-        setLoading(false);
-      }
-    } catch {}
+    const isMock = isMockDatabase();
+
+    // 1. If connected to a real live database, purge any stale mock user
+    if (!isMock) {
+      try {
+        localStorage.removeItem("mock_user");
+      } catch {}
+    } else {
+      // In local mock mode, restore stored mock user
+      try {
+        const stored = localStorage.getItem("mock_user");
+        if (stored) {
+          setUser(JSON.parse(stored));
+          setLoading(false);
+          return;
+        }
+      } catch {}
+    }
 
     // 2. Check Supabase session with safety timeout
     const fetchUser = async () => {
       try {
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Supabase auth timeout")), 1200)
+          setTimeout(() => reject(new Error("Supabase auth timeout")), 8000)
         );
         const { data: { user: sbUser } } = await Promise.race([
           supabase.auth.getUser(),
@@ -43,9 +54,13 @@ export function Providers({ children }) {
         ]);
         if (sbUser) {
           setUser(sbUser);
+        } else if (!isMock) {
+          setUser(null);
         }
       } catch {
-        // Fallback to local session if already set
+        if (!isMock) {
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }

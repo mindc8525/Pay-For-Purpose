@@ -63,10 +63,10 @@ export async function proxy(request) {
   );
 
   try {
-    // Timeout auth check after 1.5s to prevent hanging the request
+    // Allow sufficient time for Supabase network response (8s)
     const authPromise = supabase.auth.getUser();
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Auth check timeout')), 1500)
+      setTimeout(() => reject(new Error('Auth check timeout')), 8000)
     );
     const { data: { user } } = await Promise.race([authPromise, timeoutPromise]);
 

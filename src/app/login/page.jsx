@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { LoginForm } from "@/features/auth/login-form";
@@ -16,7 +17,9 @@ export default function LoginPage() {
             <p className="text-sm text-slate-600">Sign in to your Par For Purpose account</p>
           </div>
           <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-8">
-            <LoginForm />
+            <Suspense fallback={<div className="min-h-[220px] flex items-center justify-center text-sm text-slate-400">Loading sign in...</div>}>
+              <LoginForm />
+            </Suspense>
           </div>
         </div>
       </main>

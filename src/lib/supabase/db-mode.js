@@ -4,5 +4,8 @@
  */
 export function isMockDatabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  return !url || url.includes('placeholder') || url.includes('example.com') || url.includes('localhost:54321');
+  if (!url || url.includes('placeholder') || url.includes('example.com') || url.includes('localhost:54321')) {
+    return process.env.NODE_ENV !== 'production';
+  }
+  return false;
 }
