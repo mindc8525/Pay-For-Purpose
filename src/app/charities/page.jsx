@@ -5,7 +5,7 @@ import { CharitiesClient } from "./charities-client";
 
 const DEFAULT_CHARITIES = [
   {
-    id: "1",
+    id: "4279b35e-c635-4ee0-9946-7b051ff32278",
     name: "First Tee",
     description: "Empowering youth through life skills, character education, and mentorship programs that build confidence on and off the golf course.",
     image_url: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=800&auto=format&fit=crop&q=80",
@@ -14,7 +14,7 @@ const DEFAULT_CHARITIES = [
     is_active: true,
   },
   {
-    id: "2",
+    id: "fc3c6044-b1fe-4c1c-9070-fc4e1d7b7e9d",
     name: "Folds of Honor",
     description: "Providing life-changing educational scholarships to spouses and children of America’s fallen or disabled military and first responders through golf initiatives.",
     image_url: "https://images.unsplash.com/photo-1592919505780-303950717480?w=800&auto=format&fit=crop&q=80",
@@ -23,7 +23,7 @@ const DEFAULT_CHARITIES = [
     is_active: true,
   },
   {
-    id: "3",
+    id: "7076a5df-e700-4f75-83dc-176f8e207621",
     name: "St. Jude Children’s Research Hospital",
     description: "Leading the way the world understands, treats, and defeats childhood cancer and other life-threatening pediatric diseases.",
     image_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
@@ -32,7 +32,7 @@ const DEFAULT_CHARITIES = [
     is_active: true,
   },
   {
-    id: "4",
+    id: "3a7f396c-5222-409f-9239-e26def6b910a",
     name: "Make-A-Wish Foundation",
     description: "Creating life-changing wishes for children with critical illnesses, bringing hope, strength, and joy to families worldwide.",
     image_url: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop&q=80",

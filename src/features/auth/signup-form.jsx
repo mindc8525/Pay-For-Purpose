@@ -11,6 +11,7 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planQuery = selectedPlanId || searchParams?.get("plan");
+  const charityQuery = searchParams?.get("charity");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +20,7 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
     planQuery === "2" || planQuery?.includes("year") ? "yearly" : "monthly"
   );
   const [charities, setCharities] = useState(initialCharities);
-  const [selectedCharity, setSelectedCharity] = useState(initialCharities[0]?.id || "");
+  const [selectedCharity, setSelectedCharity] = useState(charityQuery || initialCharities[0]?.id || "");
   const [contribution, setContribution] = useState(10);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -36,20 +37,28 @@ export function SignupForm({ selectedPlanId, initialCharities = [] }) {
   }, [selectedPlanId, searchParams]);
 
   useEffect(() => {
+    const charityParam = searchParams?.get("charity");
+    if (charityParam) {
+      setSelectedCharity(charityParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const charityParam = searchParams?.get("charity");
     if (charities.length === 0) {
       fetch("/api/charities")
         .then((res) => (res.ok ? res.json() : []))
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
             setCharities(data);
-            setSelectedCharity((prev) => prev || data[0].id);
+            setSelectedCharity((prev) => charityParam || prev || data[0].id);
           }
         })
         .catch(() => {});
     } else if (!selectedCharity && charities.length > 0) {
-      setSelectedCharity(charities[0].id);
+      setSelectedCharity(charityParam || charities[0].id);
     }
-  }, [charities, selectedCharity]);
+  }, [charities, selectedCharity, searchParams]);
 
   const handleSignup = async (e) => {
     e.preventDefault();

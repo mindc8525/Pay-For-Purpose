@@ -2,8 +2,12 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { PlanSelection } from "@/features/subscriptions/plan-selection";
 import { getAuthUser } from "@/lib/supabase/server";
+import { Suspense } from "react";
 
-export default async function SubscribePage() {
+export default async function SubscribePage({ searchParams }) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const charityId = resolvedParams?.charity;
+
   const plans = [
     { id: '1', name: 'Monthly Membership', billing_interval: 'monthly', price: 9.99, currency: 'USD', stripe_price_id: 'price_monthly' },
     { id: '2', name: 'Annual Membership', billing_interval: 'yearly', price: 99.99, currency: 'USD', stripe_price_id: 'price_yearly' },
@@ -33,7 +37,9 @@ export default async function SubscribePage() {
               Join Par For Purpose to enter monthly cash draws, track your rounds, and empower vetted charities.
             </p>
           </div>
-          <PlanSelection plans={plans} isAuthenticated={isAuthenticated} />
+          <Suspense fallback={<div className="text-slate-500 text-center py-8">Loading plans...</div>}>
+            <PlanSelection plans={plans} isAuthenticated={isAuthenticated} initialCharityId={charityId} />
+          </Suspense>
         </div>
       </main>
       <Footer />

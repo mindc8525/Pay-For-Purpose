@@ -114,6 +114,11 @@ const FALLBACK_CHARITIES = {
   },
 };
 
+FALLBACK_CHARITIES["4279b35e-c635-4ee0-9946-7b051ff32278"] = FALLBACK_CHARITIES["1"];
+FALLBACK_CHARITIES["fc3c6044-b1fe-4c1c-9070-fc4e1d7b7e9d"] = FALLBACK_CHARITIES["2"];
+FALLBACK_CHARITIES["7076a5df-e700-4f75-83dc-176f8e207621"] = FALLBACK_CHARITIES["3"];
+FALLBACK_CHARITIES["3a7f396c-5222-409f-9239-e26def6b910a"] = FALLBACK_CHARITIES["4"];
+
 export const dynamic = 'force-dynamic';
 
 export default async function CharityDetailPage({ params }) {
@@ -201,7 +206,7 @@ export default async function CharityDetailPage({ params }) {
                       Official Website ↗
                     </a>
                   )}
-                  <Link href={`/subscribe?charity=${charity.id}`}>
+                  <Link href={`/signup?charity=${charity.id}`}>
                     <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs">
                       Support This Cause
                     </Button>
@@ -224,7 +229,7 @@ export default async function CharityDetailPage({ params }) {
                     When you select this cause, at least 10% (up to 100%) of your recurring subscription fee is remitted directly to fund their frontline community operations.
                   </p>
                 </div>
-                <Link href={`/subscribe?charity=${charity.id}`} className="shrink-0">
+                <Link href={`/signup?charity=${charity.id}`} className="shrink-0">
                   <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-xs">
                     Choose as My Cause
                   </Button>

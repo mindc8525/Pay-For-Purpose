@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
+export function PlanSelection({ plans = [], charities = [], isAuthenticated, initialCharityId }) {
   const monthlyPlan = plans.find((p) => p.billing_interval === "monthly");
   const yearlyPlan = plans.find((p) => p.billing_interval === "yearly");
   const [selectedPlan, setSelectedPlan] = useState(monthlyPlan || plans[0] || null);
@@ -19,7 +19,8 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
     setLoading(true);
 
     if (!isAuthenticated) {
-      router.push(`/signup?plan=${activePlan.id}`);
+      const charityQuery = initialCharityId ? `&charity=${encodeURIComponent(initialCharityId)}` : "";
+      router.push(`/signup?plan=${activePlan.id}${charityQuery}`);
       return;
     }
 
