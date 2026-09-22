@@ -100,8 +100,8 @@ export default function HomePage() {
               <div className="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200/80 hover:shadow-md transition-all flex flex-col group">
                 <div className="h-52 relative overflow-hidden bg-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop"
-                    alt="Youth Mentorship & Education"
+                    src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=800&auto=format&fit=crop&q=80"
+                    alt="Youth Mentorship & Character Education"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -111,73 +111,73 @@ export default function HomePage() {
                 </div>
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">First Tee Initiative</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">First Tee</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">
                       Empowering young people with life skills, character education, and mentorship programs that build confidence on and off the course.
                     </p>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
                     <span className="text-xs text-slate-500 font-medium">10% Guaranteed Minimum</span>
-                    <Link href="/charities/1" className="text-xs font-bold text-emerald-700 hover:underline">
-                      Read Impact Story →
+                    <Link href="/charities" className="text-xs font-bold text-emerald-700 hover:underline">
+                      View Charity Partner →
                     </Link>
                   </div>
                 </div>
               </div>
 
-              {/* Charity 2: Health & Humanitarian Aid */}
+              {/* Charity 2: Education & Fallen Heroes */}
               <div className="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200/80 hover:shadow-md transition-all flex flex-col group">
                 <div className="h-52 relative overflow-hidden bg-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&auto=format&fit=crop"
-                    alt="Community & Humanitarian Aid"
+                    src="https://images.unsplash.com/photo-1592919505780-303950717480?w=800&auto=format&fit=crop&q=80"
+                    alt="Scholarships for Fallen Hero Families"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <span className="absolute bottom-3 left-3 bg-emerald-700 text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-xs">
-                    Humanitarian Aid
+                    Military &amp; First Responders
                   </span>
                 </div>
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Global Aid Network</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Folds of Honor</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      Connecting athletes and supporters to fund urgent emergency relief, pediatric medical supplies, and clean community water access.
+                      Providing life-changing educational scholarships to spouses and children of America&apos;s fallen or disabled military and first responders.
                     </p>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                    <span className="text-xs text-slate-500 font-medium">Emergency Response</span>
-                    <Link href="/charities/2" className="text-xs font-bold text-emerald-700 hover:underline">
-                      Read Impact Story →
+                    <span className="text-xs text-slate-500 font-medium">Patriot Golf Days</span>
+                    <Link href="/charities" className="text-xs font-bold text-emerald-700 hover:underline">
+                      View Charity Partner →
                     </Link>
                   </div>
                 </div>
               </div>
 
-              {/* Charity 3: Ecological Preservation */}
+              {/* Charity 3: Healthcare & Pediatric Research */}
               <div className="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200/80 hover:shadow-md transition-all flex flex-col group">
                 <div className="h-52 relative overflow-hidden bg-slate-100">
                   <img
-                    src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop"
-                    alt="Environmental Stewardship"
+                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80"
+                    alt="Pediatric Cancer Treatment & Research"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <span className="absolute bottom-3 left-3 bg-emerald-700 text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-xs">
-                    Ecology & Wildlife
+                    Pediatric Health
                   </span>
                 </div>
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Green Habitat Trust</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">St. Jude Children&apos;s Research Hospital</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      Restoring native wetlands, planting biodiversity corridors, and driving sustainable resource management across protected lands.
+                      Leading the way the world understands, treats, and defeats childhood cancer and other life-threatening pediatric diseases.
                     </p>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                    <span className="text-xs text-slate-500 font-medium">Vetted Stewardship</span>
-                    <Link href="/charities/3" className="text-xs font-bold text-emerald-700 hover:underline">
-                      Read Impact Story →
+                    <span className="text-xs text-slate-500 font-medium">No Family Ever Pays</span>
+                    <Link href="/charities" className="text-xs font-bold text-emerald-700 hover:underline">
+                      View Charity Partner →
                     </Link>
                   </div>
                 </div>

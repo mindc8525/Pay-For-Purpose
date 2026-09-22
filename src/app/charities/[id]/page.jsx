@@ -9,12 +9,12 @@ import { CharityService } from "@/server/services/charity-service";
 const FALLBACK_CHARITIES = {
   "1": {
     id: "1",
-    name: "First Tee Initiative",
+    name: "First Tee",
     description:
-      "Empowering youth through life skills, character education, and mentorship programs that build confidence. First Tee teaches children core values such as honesty, integrity, sportsmanship, and perseverance through the game of golf.",
+      "Empowering youth through life skills, character education, and mentorship programs that build confidence on and off the golf course.",
     image_url:
-      "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop",
-    website_url: "https://www.firsttee.org",
+      "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=800&auto=format&fit=crop&q=80",
+    website_url: "https://firsttee.org",
     is_featured: true,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -42,12 +42,12 @@ const FALLBACK_CHARITIES = {
   },
   "2": {
     id: "2",
-    name: "Global Aid Network",
+    name: "Folds of Honor",
     description:
-      "Connecting athletes and supporters to fund urgent emergency relief, pediatric medical aid, clean water access, and disaster rehabilitation worldwide.",
+      "Providing life-changing educational scholarships to spouses and children of America’s fallen or disabled military and first responders through golf initiatives.",
     image_url:
-      "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&auto=format&fit=crop",
-    website_url: "https://www.golfforcause.org",
+      "https://images.unsplash.com/photo-1592919505780-303950717480?w=800&auto=format&fit=crop&q=80",
+    website_url: "https://foldsofhonor.org",
     is_featured: true,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -56,9 +56,9 @@ const FALLBACK_CHARITIES = {
       {
         id: "e3",
         charity_id: "2",
-        title: "Community Charity Pro-Am",
-        description: "A premier scramble tournament where 100% of proceeds fund community health programs.",
-        event_date: "2026-05-12",
+        title: "Patriot Golf Day Invitational",
+        description: "A premier charity tournament raising academic scholarships for families of fallen heroes.",
+        event_date: "2026-05-25",
         event_type: "golf_day",
         created_at: new Date().toISOString(),
       },
@@ -66,13 +66,13 @@ const FALLBACK_CHARITIES = {
   },
   "3": {
     id: "3",
-    name: "Green Habitat Trust",
+    name: "St. Jude Children’s Research Hospital",
     description:
-      "Dedicated to environmental conservation, water recycling, biodiversity corridors, and eco-friendly land stewardship on protected open spaces.",
+      "Leading the way the world understands, treats, and defeats childhood cancer and other life-threatening pediatric diseases.",
     image_url:
-      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop",
-    website_url: "https://www.greenfairways.org",
-    is_featured: false,
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
+    website_url: "https://www.stjude.org",
+    is_featured: true,
     is_active: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -80,10 +80,34 @@ const FALLBACK_CHARITIES = {
       {
         id: "e4",
         charity_id: "3",
-        title: "Eco-Course Sustainability Summit",
-        description: "Workshops with groundskeepers and environmentalists on sustainable land stewardship.",
-        event_date: "2026-07-08",
-        event_type: "workshop",
+        title: "St. Jude Charity Pro-Am Classic",
+        description: "Annual scramble raising critical funding for pediatric cancer research and patient families.",
+        event_date: "2026-07-18",
+        event_type: "golf_day",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  "4": {
+    id: "4",
+    name: "Make-A-Wish Foundation",
+    description:
+      "Creating life-changing wishes for children with critical illnesses, bringing hope, strength, and joy to families worldwide.",
+    image_url:
+      "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop&q=80",
+    website_url: "https://wish.org",
+    is_featured: false,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    charity_events: [
+      {
+        id: "e5",
+        charity_id: "4",
+        title: "Wishes on the Fairway Scramble",
+        description: "Community golf day granting wishes for children with life-threatening illnesses.",
+        event_date: "2026-09-10",
+        event_type: "golf_day",
         created_at: new Date().toISOString(),
       },
     ],
@@ -146,6 +170,9 @@ export default async function CharityDetailPage({ params }) {
                   src={charity.image_url}
                   alt={charity.name}
                   className="w-full h-full object-cover opacity-85"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
                 />
               ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex items-end p-6 sm:p-10">

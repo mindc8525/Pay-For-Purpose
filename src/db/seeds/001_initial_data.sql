@@ -8,17 +8,17 @@ INSERT INTO public.plans (name, billing_interval, price, currency, stripe_price_
 
 -- Insert Charities
 INSERT INTO public.charities (id, name, description, image_url, website_url, is_featured, is_active) VALUES
-  (uuid_generate_v4(), 'First Tee', 'Empowering youth through golf education and character development programs.', 'https://images.unsplash.com/photo-1535131749006-b7f558bce614?w=400', 'https://www.firsttee.org', true, true),
-  (uuid_generate_v4(), 'Golf for Cause', 'Connecting golf communities with charitable giving initiatives worldwide.', 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=400', 'https://www.golfforcause.org', true, true),
-  (uuid_generate_v4(), 'Green Fairways Foundation', 'Dedicated to environmental sustainability in golf courses and communities.', 'https://images.unsplash.com/photo-1593111774240-d529f12cfd7c?w=400', 'https://www.greenfairways.org', false, true),
-  (uuid_generate_v4(), 'Youth Golf Alliance', 'Providing golf opportunities to underprivileged youth across the nation.', 'https://images.unsplash.com/photo-1592919505780-303950717480?w=400', 'https://www.youthgolfalliance.org', false, true);
+  (uuid_generate_v4(), 'First Tee', 'Empowering youth through life skills, character education, and mentorship programs that build confidence on and off the golf course.', 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=800&auto=format&fit=crop&q=80', 'https://firsttee.org', true, true),
+  (uuid_generate_v4(), 'Folds of Honor', 'Providing life-changing educational scholarships to spouses and children of America’s fallen or disabled military and first responders through golf initiatives.', 'https://images.unsplash.com/photo-1592919505780-303950717480?w=800&auto=format&fit=crop&q=80', 'https://foldsofhonor.org', true, true),
+  (uuid_generate_v4(), 'St. Jude Children’s Research Hospital', 'Leading the way the world understands, treats, and defeats childhood cancer and other life-threatening pediatric diseases.', 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80', 'https://www.stjude.org', true, true),
+  (uuid_generate_v4(), 'Make-A-Wish Foundation', 'Creating life-changing wishes for children with critical illnesses, bringing hope, strength, and joy to families worldwide.', 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&auto=format&fit=crop&q=80', 'https://wish.org', false, true);
 
 -- Insert Charity Events
 INSERT INTO public.charity_events (charity_id, title, description, event_date, event_type)
 SELECT 
   c.id,
-  'Annual Golf Tournament 2026',
-  'Join us for our biggest fundraising event of the year!',
+  'Annual Youth Mentorship Day 2026',
+  'Join junior golfers and community mentors for an inspiring charity invitational.',
   '2026-06-15',
   'golf_day'
 FROM public.charities c
@@ -28,36 +28,34 @@ LIMIT 1;
 INSERT INTO public.charity_events (charity_id, title, description, event_date, event_type)
 SELECT 
   c.id,
-  'Community Golf Day',
-  'A fun day of golf for all skill levels with proceeds going to charity.',
-  '2026-04-20',
+  'Patriot Golf Day Invitational',
+  'A premier charity tournament raising academic scholarships for families of fallen heroes.',
+  '2026-05-25',
   'golf_day'
 FROM public.charities c
-WHERE c.name = 'Golf for Cause'
+WHERE c.name = 'Folds of Honor'
 LIMIT 1;
 
--- Insert Charity Events for Green Fairways
 INSERT INTO public.charity_events (charity_id, title, description, event_date, event_type)
 SELECT 
   c.id,
-  'Course Conservation Workshop',
-  'Learn about sustainable practices in golf course management.',
-  '2026-05-10',
-  'workshop'
+  'St. Jude Charity Pro-Am Classic',
+  'Annual scramble raising critical funding for pediatric cancer research and patient families.',
+  '2026-07-18',
+  'golf_day'
 FROM public.charities c
-WHERE c.name = 'Green Fairways Foundation'
+WHERE c.name LIKE '%St. Jude%'
 LIMIT 1;
 
--- Insert Charity Events for Youth Golf Alliance
 INSERT INTO public.charity_events (charity_id, title, description, event_date, event_type)
 SELECT 
   c.id,
-  'Junior Golf Championship',
-  'Annual tournament for young golfers ages 8-18.',
-  '2026-07-22',
+  'Wishes on the Fairway Scramble',
+  'Community golf day granting wishes for children with life-threatening illnesses.',
+  '2026-09-10',
   'golf_day'
 FROM public.charities c
-WHERE c.name = 'Youth Golf Alliance'
+WHERE c.name LIKE '%Make-A-Wish%'
 LIMIT 1;
 
 -- Create a function to create test users (for development)
