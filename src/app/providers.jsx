@@ -53,7 +53,22 @@ export function Providers({ children }) {
           timeoutPromise,
         ]);
         if (sbUser) {
-          setUser(sbUser);
+          let appRole = sbUser.user_metadata?.role || sbUser.app_metadata?.role;
+          try {
+            const { data: profile } = await supabase
+              .from("users")
+              .select("role")
+              .eq("id", sbUser.id)
+              .single();
+            if (profile?.role) {
+              appRole = profile.role;
+            }
+          } catch {}
+
+          setUser({
+            ...sbUser,
+            role: appRole || "USER",
+          });
         } else if (!isMock) {
           setUser(null);
         }
@@ -71,9 +86,26 @@ export function Providers({ children }) {
     // 3. Listen to Supabase auth events
     let subscription;
     try {
-      const authListener = supabase.auth.onAuthStateChange((_event, session) => {
+      const authListener = supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session?.user) {
-          setUser(session.user);
+          let appRole = session.user.user_metadata?.role || session.user.app_metadata?.role;
+          try {
+            const { data: profile } = await supabase
+              .from("users")
+              .select("role")
+              .eq("id", session.user.id)
+              .single();
+            if (profile?.role) {
+              appRole = profile.role;
+            }
+          } catch {}
+
+          setUser({
+            ...session.user,
+            role: appRole || "USER",
+          });
+        } else if (!isMock) {
+          setUser(null);
         }
         router.refresh();
       });

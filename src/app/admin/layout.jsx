@@ -10,8 +10,27 @@ export default async function AdminLayout({ children }) {
     redirect("/login?redirectTo=/admin");
   }
 
-  const isAdmin = user.role === "ADMIN" || user.user_metadata?.role === "ADMIN";
+  let isAdmin =
+    user.role === "ADMIN" ||
+    user.user_metadata?.role === "ADMIN" ||
+    user.app_metadata?.role === "ADMIN";
 
+  if (!isAdmin) {
+    try {
+      const { createAdminClient } = await import("@/lib/supabase/admin");
+      const adminClient = createAdminClient();
+      if (adminClient) {
+        const { data: profile } = await adminClient
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        if (profile?.role === "ADMIN") {
+          isAdmin = true;
+        }
+      }
+    } catch {}
+  }
 
   if (!isAdmin) {
     return (
