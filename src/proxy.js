@@ -2,12 +2,47 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
 export async function proxy(request) {
+  const pathname = request.nextUrl.pathname;
+
+  const protectedPaths = ['/dashboard'];
+  const adminPaths = ['/admin'];
+
+  const isProtectedPath = protectedPaths.some((path) =>
+    pathname.startsWith(path)
+  );
+  const isAdminPath = adminPaths.some((path) =>
+    pathname.startsWith(path)
+  );
+
+  // For all public routes (homepage, /charities, /how-it-works, /subscribe, public API, etc.),
+  // return immediately without blocking on network authentication.
+  if (!isProtectedPath && !isAdminPath) {
+    return NextResponse.next({ request });
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  // If Supabase is unconfigured or using placeholder values, handle mock auth quickly without hanging
+  if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+    // Check if user has an auth token in cookies
+    const authCookie = request.cookies.get('sb-access-token') || 
+                       request.cookies.get('supabase-auth-token') ||
+                       request.cookies.get('sb-auth-token');
+    if (!authCookie) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('redirectTo', pathname);
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseUrl,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
@@ -27,22 +62,24 @@ export async function proxy(request) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    // Timeout auth check after 1.5s to prevent hanging the request
+    const authPromise = supabase.auth.getUser();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Auth check timeout')), 1500)
+    );
+    const { data: { user } } = await Promise.race([authPromise, timeoutPromise]);
 
-  const protectedPaths = ['/dashboard'];
-  const adminPaths = ['/admin'];
-
-  const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-  const isAdminPath = adminPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  if ((isProtectedPath || isAdminPath) && !user) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('redirectTo', pathname);
+      return NextResponse.redirect(url);
+    }
+  } catch {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    url.searchParams.set('redirectTo', request.nextUrl.pathname);
+    url.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(url);
   }
 

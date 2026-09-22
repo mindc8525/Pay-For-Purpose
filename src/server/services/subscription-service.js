@@ -1,53 +1,94 @@
 import { createClient } from '@/lib/supabase/server';
+import { isMockDatabase } from '@/lib/supabase/db-mode';
 import Stripe from 'stripe';
+
+const DEFAULT_PLANS = [
+  { id: '1', name: 'Monthly Membership', billing_interval: 'monthly', price: 9.99, currency: 'USD', stripe_price_id: 'price_monthly', active: true },
+  { id: '2', name: 'Annual Membership', billing_interval: 'yearly', price: 99.99, currency: 'USD', stripe_price_id: 'price_yearly', active: true },
+];
 
 export class SubscriptionService {
   static async listPlans() {
-    const supabase = await createClient();
-    
-    const { data, error } = await supabase
-      .from('plans')
-      .select('*')
-      .eq('active', true)
-      .order('price');
-    
-    if (error) throw error;
-    return data;
+    if (isMockDatabase()) {
+      return DEFAULT_PLANS;
+    }
+
+    try {
+      const supabase = await createClient();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database query timed out')), 2000)
+      );
+
+      const { data, error } = await Promise.race([
+        supabase
+          .from('plans')
+          .select('*')
+          .eq('active', true)
+          .order('price'),
+        timeoutPromise,
+      ]);
+      
+      if (error) throw error;
+      return data || DEFAULT_PLANS;
+    } catch {
+      return DEFAULT_PLANS;
+    }
   }
 
   static async getPlanById(id) {
-    const supabase = await createClient();
-    
-    const { data, error } = await supabase
-      .from('plans')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
-    if (error) {
-      if (error.code === 'PGRST116') return null;
-      throw error;
+    if (isMockDatabase()) {
+      return DEFAULT_PLANS.find((p) => p.id === id) || null;
     }
-    
-    return data;
+
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('plans')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') return null;
+        throw error;
+      }
+      
+      return data;
+    } catch {
+      return DEFAULT_PLANS.find((p) => p.id === id) || null;
+    }
   }
 
   static async getUserSubscription(userId) {
-    const supabase = await createClient();
-    
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .select('*, plans (*)')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .single();
-    
-    if (error) {
-      if (error.code === 'PGRST116') return null;
-      throw error;
+    if (isMockDatabase()) {
+      return {
+        id: 'sub_mock_1',
+        user_id: userId,
+        status: 'active',
+        billing_interval: 'monthly',
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        plans: DEFAULT_PLANS[0],
+      };
     }
-    
-    return data;
+
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*, plans (*)')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') return null;
+        throw error;
+      }
+      
+      return data;
+    } catch {
+      return null;
+    }
   }
 
   static async createCheckoutSession(userId, email, priceId, planId) {

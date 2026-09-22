@@ -1,25 +1,17 @@
-import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminLayout({ children }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthUser();
 
   if (!user) {
     redirect("/login?redirectTo=/admin");
   }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  const isAdmin = user.role === "ADMIN" || user.user_metadata?.role === "ADMIN";
 
-  const isAdmin = profile?.role === "ADMIN" || user.user_metadata?.role === "ADMIN";
 
   if (!isAdmin) {
     return (

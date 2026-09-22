@@ -271,6 +271,7 @@ export function DashboardClient({
           <CharityCard
             preference={charityPreference}
             charities={charities}
+            onUpdate={refreshDashboardData}
           />
 
           <WinningsCard winnings={winnings} onUpdate={refreshDashboardData} />

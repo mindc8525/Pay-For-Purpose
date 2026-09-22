@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -13,15 +13,25 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
   const [uploadError, setUploadError] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(null);
 
+  useEffect(() => {
+    setWinnings(initialWinnings || []);
+  }, [initialWinnings]);
+
   if (!winnings || winnings.length === 0) {
     return (
-      <Card>
+      <Card className="rounded-2xl border-slate-200/80 shadow-xs bg-white">
         <CardHeader>
-          <h2 className="text-xl font-bold">Your Winnings</h2>
+          <h2 className="text-xl font-bold text-slate-900">Your Winnings & Prizes</h2>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-gray-500">
-            No winnings yet. Keep your 5 scores updated and participate in the monthly draws!
+          <div className="text-center py-10 text-slate-500">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-lg">
+              🏆
+            </div>
+            <h4 className="font-semibold text-slate-800 text-sm">No winnings logged yet</h4>
+            <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+              Keep your 5 rounds updated to automatically enter into every monthly cash draw!
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -29,14 +39,14 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
   }
 
   const statusColors = {
-    pending: "bg-amber-100 text-amber-700",
-    approved: "bg-green-100 text-green-700",
-    rejected: "bg-red-100 text-red-700",
+    pending: "bg-amber-50 text-amber-800 border-amber-200/80",
+    approved: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
+    rejected: "bg-rose-50 text-rose-800 border-rose-200/80",
   };
 
   const payoutColors = {
-    pending: "bg-amber-100 text-amber-700",
-    paid: "bg-green-100 text-green-700",
+    pending: "bg-slate-100 text-slate-700 border-slate-200",
+    paid: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
   };
 
   const handleFileChange = (e) => {
@@ -80,11 +90,11 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
         throw new Error(data.error || "Failed to upload proof");
       }
 
-      setUploadSuccess("Proof submitted successfully! Admin will verify shortly.");
+      setUploadSuccess("Proof submitted successfully! Admin will review and verify.");
       setWinnings(
         winnings.map((w) =>
           w.id === winnerId
-            ? { ...w, proof_url: data.winner.proof_url, verification_status: "pending" }
+            ? { ...w, proof_url: data.winner?.proof_url || "uploaded", verification_status: "pending" }
             : w
         )
       );
@@ -104,11 +114,14 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
   };
 
   return (
-    <Card>
+    <Card className="rounded-2xl border-slate-200/80 shadow-xs bg-white">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Your Winnings & Prizes</h2>
-          <span className="text-sm font-semibold text-teal-700 bg-teal-50 px-3 py-1 rounded-full">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Your Winnings & Prizes</h2>
+            <p className="text-sm text-slate-500">Official monthly draw prizes and payout records</p>
+          </div>
+          <span className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full">
             {winnings.length} {winnings.length === 1 ? "Win" : "Wins"}
           </span>
         </div>
@@ -117,28 +130,28 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
         {winnings.map((winning) => (
           <div
             key={winning.id}
-            className="p-4 bg-gray-50 border border-gray-100 rounded-xl space-y-3"
+            className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-3"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <span className="font-bold text-2xl text-gray-900">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="font-black text-2xl text-slate-900">
                   ${Number(winning.calculated_prize).toFixed(2)}
                 </span>
-                <span className="ml-2 inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-900 text-white uppercase tracking-wider">
                   {winning.match_type}
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
-                    statusColors[winning.verification_status] || "bg-gray-100 text-gray-600"
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize border ${
+                    statusColors[winning.verification_status] || "bg-slate-100 text-slate-700 border-slate-200"
                   }`}
                 >
                   Verification: {winning.verification_status}
                 </span>
                 <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
-                    payoutColors[winning.payout_status] || "bg-gray-100 text-gray-600"
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize border ${
+                    payoutColors[winning.payout_status] || "bg-slate-100 text-slate-700 border-slate-200"
                   }`}
                 >
                   Payout: {winning.payout_status}
@@ -146,17 +159,17 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
               </div>
             </div>
 
-            <div className="text-sm text-gray-500">
-              Draw Period: <span className="font-medium text-gray-700">{winning.draws?.draw_period || "Current"}</span>
+            <div className="text-xs text-slate-500 font-medium">
+              Draw Period: <span className="font-bold text-slate-700">{winning.draws?.draw_period || "Monthly Event"}</span>
             </div>
 
             {/* Proof Upload Area */}
             {uploadingWinnerId === winning.id ? (
-              <div className="p-4 bg-white border border-blue-200 rounded-lg space-y-3 mt-2">
-                <h4 className="text-sm font-semibold text-gray-900">
-                  Upload Official Golf Platform Scorecard / Screenshot
+              <div className="p-4 bg-white border border-slate-200 rounded-xl space-y-3 mt-2 shadow-2xs">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                  Upload Official Handicap Scorecard / Screenshot
                 </h4>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-slate-500">
                   Please provide screenshot proof of the Stableford scores submitted for this round (JPEG, PNG, WebP or PDF, max 5MB).
                 </p>
 
@@ -164,33 +177,33 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
                   type="file"
                   accept="image/jpeg,image/png,image/webp,application/pdf"
                   onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                  className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200 cursor-pointer"
                 />
 
                 {previewUrl && (
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">Preview:</p>
+                    <p className="text-xs text-slate-500 mb-1">Preview:</p>
                     <img
                       src={previewUrl}
                       alt="Proof preview"
-                      className="h-32 object-contain rounded border border-gray-200"
+                      className="h-32 object-contain rounded-xl border border-slate-200"
                     />
                   </div>
                 )}
 
                 {uploadError && (
-                  <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
+                  <div className="text-xs text-rose-700 bg-rose-50 border border-rose-200 p-2.5 rounded-xl">
                     {uploadError}
                   </div>
                 )}
 
                 {uploadSuccess && (
-                  <div className="text-xs text-green-700 bg-green-50 p-2 rounded font-medium">
+                  <div className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl font-medium">
                     {uploadSuccess}
                   </div>
                 )}
 
-                <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-end pt-1">
                   <Button
                     size="sm"
                     variant="outline"
@@ -201,6 +214,7 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
                       setUploadError(null);
                     }}
                     disabled={isSubmitting}
+                    className="text-xs rounded-xl"
                   >
                     Cancel
                   </Button>
@@ -208,29 +222,34 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
                     size="sm"
                     onClick={() => handleUploadProof(winning.id)}
                     disabled={isSubmitting || !selectedFile}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-slate-900 hover:bg-slate-800 text-white text-xs rounded-xl"
                   >
                     {isSubmitting ? "Uploading..." : "Submit Proof"}
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between pt-2 border-t border-gray-200/60">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200/80">
                 {winning.proof_url ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-green-700 bg-green-50 px-2.5 py-1 rounded font-medium flex items-center gap-1">
-                      ✓ Proof Uploaded
+                    <span className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1">
+                      {winning.verification_status === "approved"
+                        ? "✓ Verification Approved"
+                        : "✓ Scorecard Proof Submitted"}
                     </span>
-                    <button
-                      onClick={() => setUploadingWinnerId(winning.id)}
-                      className="text-xs text-blue-600 hover:underline font-medium"
-                    >
-                      Replace Proof
-                    </button>
+                    {winning.verification_status !== "approved" && (
+                      <button
+                        onClick={() => setUploadingWinnerId(winning.id)}
+                        className="text-xs text-slate-600 hover:text-slate-900 font-medium underline"
+                      >
+                        Update Proof
+                      </button>
+                    )}
                   </div>
                 ) : (
-                  <div className="text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded font-medium">
-                    ⚠️ Score verification required before payout
+
+                  <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded-lg font-medium">
+                    ⚠️ Official scorecard upload required before payout
                   </div>
                 )}
 
@@ -238,7 +257,7 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
                   <Button
                     size="sm"
                     onClick={() => setUploadingWinnerId(winning.id)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                    className="bg-slate-900 hover:bg-slate-800 text-white text-xs rounded-xl font-semibold shadow-2xs"
                   >
                     Upload Scorecard Proof
                   </Button>
@@ -251,3 +270,4 @@ export function WinningsCard({ winnings: initialWinnings = [], onUpdate }) {
     </Card>
   );
 }
+

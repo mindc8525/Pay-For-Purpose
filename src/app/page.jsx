@@ -327,7 +327,11 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/how-it-works">
-                <Button size="lg" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-900 hover:text-white px-8 py-6 text-base rounded-xl">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="bg-white hover:bg-slate-100 text-slate-900 font-bold px-8 py-6 text-base rounded-xl shadow-md transition-all border border-white"
+                >
                   Read Full Rules
                 </Button>
               </Link>

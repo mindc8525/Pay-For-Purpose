@@ -28,8 +28,8 @@ export function WinningsPageClient() {
 
   if (loading) {
     return (
-      <div className="py-12 text-center text-gray-500">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-3"></div>
+      <div className="py-14 text-center text-slate-500">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-3"></div>
         Loading your winnings...
       </div>
     );
@@ -47,33 +47,33 @@ export function WinningsPageClient() {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid sm:grid-cols-3 gap-4">
-        <Card className="bg-white shadow-sm border-gray-100">
+        <Card className="bg-white shadow-xs border-slate-200/80 rounded-2xl">
           <CardContent className="p-5">
-            <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Won</div>
-            <div className="text-3xl font-black text-purple-600 mt-1">
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Won</div>
+            <div className="text-3xl font-black text-slate-900 mt-1">
               ${totalPrize.toFixed(2)}
             </div>
-            <div className="text-xs text-gray-500 mt-1">Across all monthly draws</div>
+            <div className="text-xs text-slate-500 mt-1">Across all monthly draws</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border-gray-100">
+        <Card className="bg-white shadow-xs border-slate-200/80 rounded-2xl">
           <CardContent className="p-5">
-            <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Winning Rounds</div>
-            <div className="text-3xl font-black text-teal-600 mt-1">
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Winning Rounds</div>
+            <div className="text-3xl font-black text-emerald-700 mt-1">
               {winnings.length}
             </div>
-            <div className="text-xs text-gray-500 mt-1">Qualified prize matches</div>
+            <div className="text-xs text-slate-500 mt-1">Qualified prize matches</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border-gray-100">
+        <Card className="bg-white shadow-xs border-slate-200/80 rounded-2xl">
           <CardContent className="p-5">
-            <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Action Needed</div>
-            <div className="text-3xl font-black text-amber-600 mt-1">
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Action Needed</div>
+            <div className="text-3xl font-black text-amber-700 mt-1">
               {pendingVerification}
             </div>
-            <div className="text-xs text-amber-700 mt-1 font-medium">
+            <div className="text-xs text-amber-700 mt-1 font-semibold">
               {pendingVerification > 0 ? "Upload proof required" : "All verified"}
             </div>
           </CardContent>
@@ -83,11 +83,11 @@ export function WinningsPageClient() {
       <WinningsCard winnings={winnings} onUpdate={fetchWinnings} />
 
       {/* Verification Instructions Card */}
-      <Card className="bg-blue-50/50 border-blue-100">
+      <Card className="bg-emerald-50/50 border-emerald-100/80 rounded-2xl">
         <CardHeader>
-          <h3 className="text-base font-bold text-blue-950">Prize Verification & Payout Process</h3>
+          <h3 className="text-base font-bold text-emerald-950">Prize Verification & Payout Process</h3>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-blue-900/80">
+        <CardContent className="space-y-2 text-sm text-emerald-900/80">
           <ol className="list-decimal pl-5 space-y-1">
             <li><strong>Match Evaluation:</strong> When a monthly draw concludes, our engine automatically checks your 5 Stableford scores against the drawn numbers.</li>
             <li><strong>Proof Submission:</strong> If you match 3, 4, or 5 numbers, submit a screenshot or export from your official golf handicapping platform verifying your round.</li>
@@ -99,3 +99,4 @@ export function WinningsPageClient() {
     </div>
   );
 }
+

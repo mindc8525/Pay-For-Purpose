@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,11 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setScores(initialScores || []);
+  }, [initialScores]);
+
 
   // Edit State
   const [editingScoreId, setEditingScoreId] = useState(null);
@@ -146,17 +151,17 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
   };
 
   return (
-    <Card>
+    <Card className="rounded-2xl border-slate-200/80 shadow-xs">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Golf Score Tracker</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-xl font-bold text-slate-900">Golf Score Tracker</h2>
+            <p className="text-sm text-slate-500">
               Maintain your latest 5 Stableford scores (1–45 points). Your newest scores are used for the monthly draw numbers!
             </p>
           </div>
-          <div className="text-right">
-            <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+          <div className="shrink-0 self-start sm:self-auto">
+            <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full whitespace-nowrap">
               {scores.length}/5 Scores Active
             </span>
           </div>
@@ -165,11 +170,11 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
 
       <CardContent className="space-y-5">
         {/* Add Score Form */}
-        <form onSubmit={handleAddScore} className="p-4 bg-gray-50 border border-gray-100 rounded-xl space-y-3">
-          <h3 className="text-sm font-semibold text-gray-800">Add New Round Score</h3>
+        <form onSubmit={handleAddScore} className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-3">
+          <h3 className="text-sm font-bold text-slate-800">Add New Round Score</h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
-              <label htmlFor="scoreDate" className="block text-xs font-medium text-gray-600 mb-1">
+              <label htmlFor="scoreDate" className="block text-xs font-medium text-slate-600 mb-1">
                 Round Date
               </label>
               <Input
@@ -178,11 +183,11 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                 value={scoreDate}
                 onChange={(e) => setScoreDate(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white border-slate-300 rounded-xl"
               />
             </div>
             <div className="w-full sm:w-36">
-              <label htmlFor="stablefordScore" className="block text-xs font-medium text-gray-600 mb-1">
+              <label htmlFor="stablefordScore" className="block text-xs font-medium text-slate-600 mb-1">
                 Stableford (1-45)
               </label>
               <Input
@@ -194,19 +199,20 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                 min="1"
                 max="45"
                 required
-                className="bg-white"
+                className="bg-white border-slate-300 rounded-xl"
               />
             </div>
             <div className="flex items-end">
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white"
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-xs px-5 py-2.5 h-10 shadow-xs"
               >
                 {loading ? "Adding..." : "Add Score"}
               </Button>
             </div>
           </div>
+
 
           {scores.length >= 5 && (
             <p className="text-xs text-amber-600 font-medium">
@@ -248,7 +254,7 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
             {scores.map((score, index) => (
               <div
                 key={score.id}
-                className="p-3.5 bg-white border border-gray-100 shadow-sm rounded-xl flex items-center justify-between hover:border-gray-200 transition-colors"
+                className="p-3.5 bg-white border border-slate-200/80 shadow-2xs rounded-xl flex items-center justify-between hover:border-slate-300 transition-colors"
               >
                 {editingScoreId === score.id ? (
                   <div className="flex-1 flex flex-col sm:flex-row gap-2 items-center">
@@ -256,7 +262,7 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="text-sm w-full sm:w-44"
+                      className="text-sm w-full sm:w-44 border-slate-300 rounded-xl"
                     />
                     <Input
                       type="number"
@@ -264,14 +270,14 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                       onChange={(e) => setEditScore(e.target.value)}
                       min="1"
                       max="45"
-                      className="text-sm w-full sm:w-24"
+                      className="text-sm w-full sm:w-24 border-slate-300 rounded-xl"
                     />
                     <div className="flex gap-2">
                       <Button
                         size="sm"
                         onClick={() => handleSaveEdit(score.id)}
                         disabled={editLoading}
-                        className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                        className="bg-emerald-700 hover:bg-emerald-800 text-white text-xs rounded-xl"
                       >
                         {editLoading ? "..." : "Save"}
                       </Button>
@@ -279,7 +285,7 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                         size="sm"
                         variant="ghost"
                         onClick={handleCancelEdit}
-                        className="text-xs"
+                        className="text-xs text-slate-600 hover:text-slate-900 rounded-xl"
                       >
                         Cancel
                       </Button>
@@ -288,11 +294,11 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                 ) : (
                   <>
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs font-bold flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center border border-slate-200">
                         #{index + 1}
                       </span>
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-semibold text-slate-900">
                           {new Date(score.score_date).toLocaleDateString("en-US", {
                             weekday: "short",
                             year: "numeric",
@@ -300,20 +306,20 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                             day: "numeric",
                           })}
                         </div>
-                        <div className="text-xs text-gray-500">Official Stableford Round</div>
+                        <div className="text-xs text-slate-500">Official Stableford Round</div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <span className="text-xl font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100">
-                        {score.stableford_score} <span className="text-xs text-gray-500 font-normal">pts</span>
+                      <span className="text-xl font-black text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200/60">
+                        {score.stableford_score} <span className="text-xs text-emerald-600 font-semibold">pts</span>
                       </span>
                       <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleStartEdit(score)}
-                          className="text-gray-600 hover:text-blue-600 text-xs px-2"
+                          className="text-slate-600 hover:text-slate-900 text-xs px-2 rounded-lg"
                         >
                           Edit
                         </Button>
@@ -321,7 +327,7 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteScore(score.id)}
-                          className="text-gray-400 hover:text-red-600 text-xs px-2"
+                          className="text-slate-400 hover:text-rose-600 text-xs px-2 rounded-lg"
                         >
                           Delete
                         </Button>
@@ -330,6 +336,7 @@ export function ScoreManagement({ initialScores = [], onScoreUpdate }) {
                   </>
                 )}
               </div>
+
             ))}
           </div>
         )}

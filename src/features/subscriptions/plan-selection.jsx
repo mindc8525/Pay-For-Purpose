@@ -65,36 +65,36 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
       <div className="grid md:grid-cols-2 gap-6">
         {monthlyPlan && (
           <Card
-            className={`cursor-pointer transition-all ${
+            className={`cursor-pointer transition-all rounded-2xl bg-white border ${
               selectedPlan?.id === monthlyPlan.id
-                ? "ring-2 ring-blue-500 shadow-lg"
-                : "hover:shadow-md"
+                ? "ring-2 ring-emerald-600 border-emerald-500/50 shadow-md"
+                : "border-slate-200/80 hover:shadow-md"
             }`}
             onClick={() => setSelectedPlan(monthlyPlan)}
           >
             <CardHeader>
-              <h3 className="text-xl font-bold">{monthlyPlan.name}</h3>
-              <div className="text-3xl font-bold text-blue-600">
+              <h3 className="text-xl font-bold text-slate-900">{monthlyPlan.name}</h3>
+              <div className="text-3xl font-extrabold text-slate-900">
                 ${monthlyPlan.price}
-                <span className="text-base font-normal text-gray-500">/month</span>
+                <span className="text-base font-normal text-slate-500">/month</span>
               </div>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2.5 text-sm text-slate-600">
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Participate in monthly draws
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Track up to 5 scores
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Support your chosen charity
@@ -106,39 +106,39 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
 
         {yearlyPlan && (
           <Card
-            className={`cursor-pointer transition-all ${
+            className={`cursor-pointer transition-all rounded-2xl bg-white border relative ${
               selectedPlan?.id === yearlyPlan.id
-                ? "ring-2 ring-blue-500 shadow-lg"
-                : "hover:shadow-md"
-            } relative`}
+                ? "ring-2 ring-emerald-600 border-emerald-500/50 shadow-md"
+                : "border-slate-200/80 hover:shadow-md"
+            }`}
             onClick={() => setSelectedPlan(yearlyPlan)}
           >
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-blue-600 to-teal-500 text-white text-sm font-medium rounded-full">
-              Save 17%
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-700 text-white text-xs font-semibold rounded-full shadow-xs">
+              Save 17% (2 Months Free)
             </div>
             <CardHeader>
-              <h3 className="text-xl font-bold">{yearlyPlan.name}</h3>
-              <div className="text-3xl font-bold text-blue-600">
+              <h3 className="text-xl font-bold text-slate-900">{yearlyPlan.name}</h3>
+              <div className="text-3xl font-extrabold text-slate-900">
                 ${yearlyPlan.price}
-                <span className="text-base font-normal text-gray-500">/year</span>
+                <span className="text-base font-normal text-slate-500">/year</span>
               </div>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2.5 text-sm text-slate-600">
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Everything in Monthly
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   2 months free
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Priority support
@@ -150,16 +150,16 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
       </div>
 
       {selectedPlan && (
-        <Card className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <Card className="animate-in fade-in slide-in-from-bottom-4 duration-300 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
           <CardContent className="pt-6">
-            <h4 className="text-lg font-semibold mb-4">Select a Charity (Optional)</h4>
+            <h4 className="text-lg font-bold text-slate-900 mb-4">Select a Charity (Optional)</h4>
             <div className="space-y-4">
               <select
                 value={selectedCharity}
                 onChange={(e) => setSelectedCharity(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 shadow-2xs"
               >
-                <option value="">Select a charity...</option>
+                <option value="">Select a partner charity...</option>
                 {charities.map((charity) => (
                   <option key={charity.id} value={charity.id}>
                     {charity.name}
@@ -168,8 +168,8 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
               </select>
 
               {selectedCharity && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="pt-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Contribution Percentage (min 10%)
                   </label>
                   <div className="flex items-center gap-4">
@@ -179,9 +179,11 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
                       max="100"
                       value={contribution}
                       onChange={(e) => setContribution(Number(e.target.value))}
-                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                     />
-                    <span className="w-16 text-center font-medium">{contribution}%</span>
+                    <span className="w-16 text-center font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200/60 text-sm">
+                      {contribution}%
+                    </span>
                   </div>
                 </div>
               )}
@@ -190,7 +192,7 @@ export function PlanSelection({ plans = [], charities = [], isAuthenticated }) {
             <Button
               onClick={handleSubscribe}
               disabled={loading}
-              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600"
+              className="w-full mt-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs py-6 text-base font-semibold transition-all"
             >
               {loading
                 ? "Processing..."

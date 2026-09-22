@@ -1,13 +1,20 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { PlanSelection } from "@/features/subscriptions/plan-selection";
+import { CharityService } from "@/server/services/charity-service";
 
-export default function SubscribePage() {
+export default async function SubscribePage() {
   const plans = [
     { id: '1', name: 'Monthly Membership', billing_interval: 'monthly', price: 9.99, currency: 'USD', stripe_price_id: 'price_monthly' },
     { id: '2', name: 'Annual Membership', billing_interval: 'yearly', price: 99.99, currency: 'USD', stripe_price_id: 'price_yearly' },
   ];
-  const charities = [];
+  
+  let charities = [];
+  try {
+    charities = await CharityService.list();
+  } catch {
+    charities = [];
+  }
   const isAuthenticated = false;
 
   return (
