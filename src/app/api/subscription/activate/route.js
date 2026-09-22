@@ -73,6 +73,27 @@ export async function POST(request) {
       result = data;
     }
 
+    // 3. Save charity preference if provided
+    const charityId = body.charityId;
+    const contributionPercentage = Number(body.contributionPercentage) || 10;
+    if (charityId) {
+      try {
+        await adminClient
+          .from('user_charity_preferences')
+          .upsert(
+            {
+              user_id: userId,
+              charity_id: charityId,
+              contribution_percentage: Math.max(10, Math.min(100, contributionPercentage)),
+              updated_at: now.toISOString(),
+            },
+            { onConflict: 'user_id' }
+          );
+      } catch (charityErr) {
+        console.warn('Error saving charity preference during activation:', charityErr);
+      }
+    }
+
     return NextResponse.json({ success: true, subscription: result });
   } catch (error) {
     console.error('Error activating direct subscription:', error);

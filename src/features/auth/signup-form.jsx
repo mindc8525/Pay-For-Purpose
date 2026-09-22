@@ -2,23 +2,42 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export function SignupForm({ selectedPlanId }) {
+export function SignupForm({ selectedPlanId, initialCharities = [] }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [billingInterval, setBillingInterval] = useState(
     selectedPlanId === "2" || selectedPlanId?.includes("year") ? "yearly" : "monthly"
   );
+  const [charities, setCharities] = useState(initialCharities);
+  const [selectedCharity, setSelectedCharity] = useState(initialCharities[0]?.id || "");
+  const [contribution, setContribution] = useState(10);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    if (charities.length === 0) {
+      fetch("/api/charities")
+        .then((res) => (res.ok ? res.json() : []))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setCharities(data);
+            setSelectedCharity(data[0].id);
+          }
+        })
+        .catch(() => {});
+    } else if (!selectedCharity && charities.length > 0) {
+      setSelectedCharity(charities[0].id);
+    }
+  }, [charities, selectedCharity]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -43,7 +62,7 @@ export function SignupForm({ selectedPlanId }) {
         return;
       }
 
-      // Provision active membership directly in Supabase
+      // Provision active membership & charity preference directly in Supabase
       if (data?.user?.id) {
         try {
           await fetch("/api/subscription/activate", {
@@ -52,10 +71,12 @@ export function SignupForm({ selectedPlanId }) {
             body: JSON.stringify({
               userId: data.user.id,
               billingInterval,
+              charityId: selectedCharity,
+              contributionPercentage: Number(contribution),
             }),
           });
         } catch (subErr) {
-          console.warn("Could not auto-provision subscription:", subErr);
+          console.warn("Could not auto-provision subscription/charity:", subErr);
         }
       }
 
@@ -64,7 +85,7 @@ export function SignupForm({ selectedPlanId }) {
       } else {
         const planName = billingInterval === "yearly" ? "Yearly Hero" : "Monthly Hero";
         setSuccess(
-          `Account and active ${planName} membership created! You can now sign in below with your credentials.`
+          `Account, active ${planName} membership, and charity preference registered! You can now sign in below with your credentials.`
         );
         setLoading(false);
       }
@@ -141,7 +162,7 @@ export function SignupForm({ selectedPlanId }) {
 
           {/* Plan Selection */}
           <div className="pt-1">
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
               Select Membership Tier
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -184,6 +205,58 @@ export function SignupForm({ selectedPlanId }) {
             </div>
           </div>
 
+          {/* Charity Selection */}
+          <div className="pt-1 space-y-3 bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="charitySelect" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Supported Partner Charity
+                </label>
+                <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200">
+                  Required (§ 08.1)
+                </span>
+              </div>
+              <select
+                id="charitySelect"
+                value={selectedCharity}
+                onChange={(e) => setSelectedCharity(e.target.value)}
+                required
+                className="w-full px-3 py-2.5 bg-white text-slate-900 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-medium"
+              >
+                {charities.length === 0 && (
+                  <option value="">Loading charities...</option>
+                )}
+                {charities.map((charity) => (
+                  <option key={charity.id} value={charity.id}>
+                    {charity.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs font-semibold text-slate-600">
+                  Charity Allocation Share (min 10%)
+                </label>
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                  {contribution}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={contribution}
+                onChange={(e) => setContribution(Number(e.target.value))}
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+              />
+              <p className="text-[11px] text-slate-400 mt-1">
+                At least 10% of your membership fee directly empowers your chosen cause.
+              </p>
+            </div>
+          </div>
+
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 leading-relaxed font-medium">
               {error}
@@ -195,7 +268,7 @@ export function SignupForm({ selectedPlanId }) {
             className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs py-5 text-sm font-semibold transition-all mt-2"
             disabled={loading}
           >
-            {loading ? "Creating account..." : "Join Par For Purpose"}
+            {loading ? "Creating account & membership..." : "Join Par For Purpose"}
           </Button>
 
           <p className="text-center text-xs text-slate-500 pt-2">
