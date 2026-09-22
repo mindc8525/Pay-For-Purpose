@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/providers";
 import Link from "next/link";
@@ -15,6 +15,7 @@ export function DashboardClient({
   subscription: initialSubscription,
   initialScores = [],
   charityPreference: initialCharityPreference,
+  initialCharities = [],
   participations: initialParticipations = [],
   winnings: initialWinnings = [],
   upcomingDraw: initialUpcomingDraw,
@@ -25,11 +26,14 @@ export function DashboardClient({
   const [scores, setScores] = useState(initialScores);
   const [subscription, setSubscription] = useState(initialSubscription);
   const [charityPreference, setCharityPreference] = useState(initialCharityPreference);
-  const [charities, setCharities] = useState([]);
+  const [charities, setCharities] = useState(initialCharities);
   const [participations, setParticipations] = useState(initialParticipations);
   const [winnings, setWinnings] = useState(initialWinnings);
   const [upcomingDraw, setUpcomingDraw] = useState(initialUpcomingDraw);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const initialDataLoaded = useRef(
+    !!initialSubscription || initialScores.length > 0 || !!initialCharityPreference || initialCharities.length > 0
+  );
 
   // Fetch all user modules
   const refreshDashboardData = useCallback(async () => {
@@ -68,15 +72,15 @@ export function DashboardClient({
       return;
     }
 
-    if (authUser) {
+    if (authUser && !initialDataLoaded.current) {
       refreshDashboardData();
     }
   }, [authUser, authLoading, router, refreshDashboardData]);
 
-  if (authLoading) {
+  if (authLoading && !initialDataLoaded.current) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
