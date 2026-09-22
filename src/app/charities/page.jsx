@@ -82,16 +82,31 @@ export default async function CharitiesPage() {
       <Header />
       <main className="flex-1 py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 max-w-2xl mx-auto">
+          <div className="text-center mb-12 max-w-3xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-3.5 py-1 rounded-full">
               Vetted Partner Directory
             </span>
             <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 mt-4 mb-4 tracking-tight">
               Our Partner Causes
             </h1>
-            <p className="text-base text-slate-600 leading-relaxed">
+            <p className="text-base text-slate-600 leading-relaxed mb-6">
               Every month, a guaranteed portion of your membership goes directly to empowering these organizations. Select the cause you wish to champion.
             </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-slate-700">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Guaranteed Min. 10% Contribution
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-teal-500" />
+                Verified Non-Profit Partners
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                Transparent Remittance Audit
+              </span>
+            </div>
           </div>
 
           <CharitiesClient

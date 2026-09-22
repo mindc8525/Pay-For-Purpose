@@ -8,7 +8,7 @@ function isMockDatabase() {
 // In-memory high performance mock store when Supabase is in mock/unconnected mode
 let inMemoryCharities = [
   {
-    id: "1",
+    id: "4279b35e-c635-4ee0-9946-7b051ff32278",
     name: "First Tee",
     description:
       "Empowering youth through life skills, character education, and mentorship programs that build confidence on and off the golf course.",
@@ -22,7 +22,7 @@ let inMemoryCharities = [
     charity_events: [
       {
         id: "e1",
-        charity_id: "1",
+        charity_id: "4279b35e-c635-4ee0-9946-7b051ff32278",
         title: "Annual Youth Mentorship Day 2026",
         description: "Join junior golfers and community mentors for an inspiring charity invitational.",
         event_date: "2026-06-15",
@@ -30,7 +30,7 @@ let inMemoryCharities = [
       },
       {
         id: "e2",
-        charity_id: "1",
+        charity_id: "4279b35e-c635-4ee0-9946-7b051ff32278",
         title: "Life Skills & Mentorship Clinic",
         description: "An inspiring workshop introducing underprivileged kids to leadership fundamentals.",
         event_date: "2026-08-20",
@@ -39,7 +39,7 @@ let inMemoryCharities = [
     ],
   },
   {
-    id: "2",
+    id: "fc3c6044-b1fe-4c1c-9070-fc4e1d7b7e9d",
     name: "Folds of Honor",
     description:
       "Providing life-changing educational scholarships to spouses and children of America’s fallen or disabled military and first responders through golf initiatives.",
@@ -53,7 +53,7 @@ let inMemoryCharities = [
     charity_events: [
       {
         id: "e3",
-        charity_id: "2",
+        charity_id: "fc3c6044-b1fe-4c1c-9070-fc4e1d7b7e9d",
         title: "Patriot Golf Day Invitational",
         description: "A premier charity tournament raising academic scholarships for families of fallen heroes.",
         event_date: "2026-05-25",
@@ -62,7 +62,7 @@ let inMemoryCharities = [
     ],
   },
   {
-    id: "3",
+    id: "7076a5df-e700-4f75-83dc-176f8e207621",
     name: "St. Jude Children’s Research Hospital",
     description:
       "Leading the way the world understands, treats, and defeats childhood cancer and other life-threatening pediatric diseases.",
@@ -76,7 +76,7 @@ let inMemoryCharities = [
     charity_events: [
       {
         id: "e4",
-        charity_id: "3",
+        charity_id: "7076a5df-e700-4f75-83dc-176f8e207621",
         title: "St. Jude Charity Pro-Am Classic",
         description: "Annual scramble raising critical funding for pediatric cancer research and patient families.",
         event_date: "2026-07-18",
@@ -85,7 +85,7 @@ let inMemoryCharities = [
     ],
   },
   {
-    id: "4",
+    id: "3a7f396c-5222-409f-9239-e26def6b910a",
     name: "Make-A-Wish Foundation",
     description:
       "Creating life-changing wishes for children with critical illnesses, bringing hope, strength, and joy to families worldwide.",
@@ -99,7 +99,7 @@ let inMemoryCharities = [
     charity_events: [
       {
         id: "e5",
-        charity_id: "4",
+        charity_id: "3a7f396c-5222-409f-9239-e26def6b910a",
         title: "Wishes on the Fairway Scramble",
         description: "Community golf day granting wishes for children with life-threatening illnesses.",
         event_date: "2026-09-10",
@@ -140,7 +140,7 @@ export class CharityService {
       }
 
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Database query timed out')), 2000)
+        setTimeout(() => reject(new Error('Database query timed out')), 6000)
       );
 
       const { data, error } = await Promise.race([query, timeoutPromise]);
@@ -152,6 +152,11 @@ export class CharityService {
   }
 
   static async getById(id) {
+    if (id === "1") id = "4279b35e-c635-4ee0-9946-7b051ff32278";
+    if (id === "2") id = "fc3c6044-b1fe-4c1c-9070-fc4e1d7b7e9d";
+    if (id === "3") id = "7076a5df-e700-4f75-83dc-176f8e207621";
+    if (id === "4") id = "3a7f396c-5222-409f-9239-e26def6b910a";
+
     if (isMockDatabase()) {
       const charity = inMemoryCharities.find((c) => c.id === id && c.is_active);
       return charity || null;
@@ -160,7 +165,7 @@ export class CharityService {
     try {
       const supabase = await createClient();
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Database query timed out')), 2000)
+        setTimeout(() => reject(new Error('Database query timed out')), 6000)
       );
 
       const { data, error } = await Promise.race([
