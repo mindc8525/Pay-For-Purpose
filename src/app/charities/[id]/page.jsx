@@ -170,9 +170,6 @@ export default async function CharityDetailPage({ params }) {
                   src={charity.image_url}
                   alt={charity.name}
                   className="w-full h-full object-cover opacity-85"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
                 />
               ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex items-end p-6 sm:p-10">
